@@ -1,0 +1,8 @@
+keras-tcn
+numpy
+keract
+matplotlib
+pydot
+pandas
+tensoraudio
+riskplot

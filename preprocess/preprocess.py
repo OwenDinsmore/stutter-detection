@@ -11,7 +11,7 @@ class SEP28kPreprocessor:
         self.stutter_cols = ['Prolongation', 'Block', 'SoundRep', 'WordRep']
 
     def load_clip(self, row):
-        ep_file = self.data_dir / f'episodes/episode_{row.EpId}.mp3'
+        ep_file = self.data_dir / f'episodes/episode_{row.EpId}.wav'
         if not ep_file.exists():
             return None, None
         audio, _ = librosa.load(ep_file, sr=self.sr, offset=row.Start/self.sr, duration=(row.Stop-row.Start)/self.sr)

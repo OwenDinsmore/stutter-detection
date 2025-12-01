@@ -22,14 +22,27 @@ class SEP28kPreprocessor:
         mfcc = librosa.feature.mfcc(y=audio, sr=self.sr, n_mfcc=13)
         return mfcc.mean(axis=1)
 
-    def get_dataset(self, max_samples=None):
+    def extract_features_temporal(self, audio, max_len=100):
+        mfcc = librosa.feature.mfcc(y=audio, sr=self.sr, n_mfcc=13)
+        mfcc = mfcc.T
+        if mfcc.shape[0] < max_len:
+            pad_width = max_len - mfcc.shape[0]
+            mfcc = np.pad(mfcc, ((0, pad_width), (0, 0)), mode='constant')
+        else:
+            mfcc = mfcc[:max_len, :]
+        return mfcc
+
+    def get_dataset(self, max_samples=None, temporal=False):
         X, y = [], []
         df = self.labels_df if max_samples is None else self.labels_df.head(max_samples)
 
         for _, row in df.iterrows():
             audio, label = self.load_clip(row)
             if audio is not None:
-                features = self.extract_features(audio)
+                if temporal:
+                    features = self.extract_features_temporal(audio)
+                else:
+                    features = self.extract_features(audio)
                 X.append(features)
                 y.append(label)
 
